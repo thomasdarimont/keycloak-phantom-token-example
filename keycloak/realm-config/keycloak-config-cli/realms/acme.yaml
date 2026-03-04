@@ -12,7 +12,7 @@ clients:
     publicClient: false
     standardFlowEnabled: false
     directAccessGrantsEnabled: false
-    serviceAccountsEnabled: true
+    serviceAccountsEnabled: false
     secret: "secret"
     fullScopeAllowed: false
     attributes:
@@ -85,6 +85,24 @@ clients:
     fullScopeAllowed: false
     attributes:
       "client.use.lightweight.access.token.enabled": "true"
+    optionalClientScopes:
+      - "acme.api.1"
+      - "acme.api.2"
+
+clientScopes:
+  - name: acme.api.1
+    description: 'Acme: API 1'
+    protocol: openid-connect
+    attributes:
+      include.in.token.scope: 'true'
+      display.on.consent.screen: 'false'
+
+  - name: acme.api.2
+    description: 'Acme: API 2'
+    protocol: openid-connect
+    attributes:
+      include.in.token.scope: 'true'
+      display.on.consent.screen: 'false'
 
 users:
   - username: tester
