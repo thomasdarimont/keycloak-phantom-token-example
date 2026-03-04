@@ -1,0 +1,17 @@
+# IntelliJ IDEA
+.idea/
+
+# Docker
+.dockerignore
+
+# Scratch/temporary files
+scratch/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Docker volumes data (if accidentally created locally)
+*-data/
+
+target/

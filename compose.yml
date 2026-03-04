@@ -1,0 +1,128 @@
+services:
+
+  keycloak-db:
+    image: postgres:17.6-bookworm
+    environment:
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+      POSTGRES_DB: keycloak
+    command:
+      # Certificates are added in the Dockerfile with the proper permissions for postgresql
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "pg_stat_statements.track=all"
+      - "-c"
+      - "max_connections=200"
+    ports:
+      - "45432:5432"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data:z
+
+  echo-server:
+    build:
+      context: "./apps/echo-server"
+      dockerfile: "Dockerfile"
+    extra_hosts:
+      - "id.localhost:host-gateway"
+    ports:
+      - "9080:9080"
+    networks:
+      - backend
+    depends_on:
+      - keycloak
+
+  proxy:
+    build:
+      context: "./nginx"
+      dockerfile: "Dockerfile"
+    environment:
+      # echo -n "acme-api-gateway:secret" | base64
+      CUSTOM_INTROSPECTION_AUTH_HEADER: "YWNtZS1hcGktZ2F0ZXdheTpzZWNyZXQ="
+      CUSTOM_INTROSPECTION_ENDPOINT: "http://keycloak/auth/realms/acme/protocol/openid-connect/token/introspect"
+      # Only substitute these variables, leave nginx $variables untouched
+      NGINX_ENVSUBST_FILTER: "CUSTOM_"
+    volumes:
+      - ./nginx/config/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/config/default.conf:/etc/nginx/templates/default.conf.template
+      - ./nginx/wwwroot:/usr/share/nginx/html:z
+    ports:
+      - "80:80"
+    networks:
+      - backend
+    depends_on:
+      - keycloak
+      - echo-server
+    extra_hosts:
+      - "id.localhost:host-gateway"
+      - "apps.localhost:host-gateway"
+      - "api.localhost:host-gateway"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.4
+
+    environment:
+
+      # Keycloak Admin User
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+
+      # Logging, see: https://www.keycloak.org/server/logging
+      KC_LOG_LEVEL: INFO,com.thomasdarimont.training.keycloak:debug
+      KC_LOG_CONSOLE_OUTPUT: default
+      #KC_LOG_CONSOLE_OUTPUT: json
+
+      # External frontend hostname, see: https://www.keycloak.org/server/hostname
+      KC_HOSTNAME: "http://id.localhost/auth"
+      KC_HTTP_RELATIVE_PATH: "/auth"
+      KC_PROXY_HEADERS: "xforwarded"
+
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloak-db
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+
+      # Additional JVM options (set JGROUPS bind addr in .env file)
+      ## PrintCommandLineFlags prints inferred JVM parameters
+      JAVA_OPTS_APPEND: "--show-version"
+
+#      # Remote Debugging
+      KC_DEBUG: "true"
+      KC_DEBUG_PORT: "*:8787"
+
+    volumes:
+      # Add custom Keycloak extensions
+      - ./keycloak/extensions/target/extensions.jar:/opt/keycloak/providers/extensions.jar:z
+
+    extra_hosts:
+      - "id.localhost:host-gateway"
+      - "apps.localhost:host-gateway"
+      - "api.localhost:host-gateway"
+
+    ports:
+      - 8080:8080 # HTTP
+      - 9000:9000 # Management
+      - 8787:8787 # Java Remote Debug
+
+    networks:
+      - backend
+
+    command: 
+      - start-dev
+
+networks:
+  backend:
+
+volumes:
+  keycloak-data:
+    name: kc-dev-ws-phantomdemo-data
+  keycloak-db-data:
+    name: kc-db-dev-ws-phantomdemo-data

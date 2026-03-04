@@ -1,0 +1,102 @@
+realm: acme
+enabled: true
+displayName: "Acme"
+displayNameHtml: "Acme"
+
+clients:
+  - clientId: acme-api-gateway
+    protocol: openid-connect
+    name: Acme API Gateway
+    description: "Acme API Gateway Description"
+    enabled: true
+    publicClient: false
+    standardFlowEnabled: false
+    directAccessGrantsEnabled: false
+    serviceAccountsEnabled: true
+    secret: "secret"
+    fullScopeAllowed: false
+    attributes:
+       # Disable JWT claim in introspection response
+       "client.introspection.response.allow.jwt.claim.enabled": "false"
+
+  - clientId: acme-api-1
+    protocol: openid-connect
+    name: Acme API 1
+    description: "Acme API 1 Description"
+    enabled: true
+    publicClient: false
+    standardFlowEnabled: false
+    directAccessGrantsEnabled: false
+    serviceAccountsEnabled: false
+    fullScopeAllowed: false
+
+  - clientId: acme-api-2
+    protocol: openid-connect
+    name: Acme API 2
+    description: "Acme API 2 Description"
+    enabled: true
+    publicClient: false
+    standardFlowEnabled: false
+    directAccessGrantsEnabled: false
+    serviceAccountsEnabled: false
+    fullScopeAllowed: false
+
+  - clientId: acme-minispa
+    protocol: openid-connect
+    name: Acme Mini SPA
+    description: "Acme Mini SPA Description"
+    enabled: true
+    publicClient: true
+    standardFlowEnabled: true
+    directAccessGrantsEnabled: false
+    # Show client in account-console
+    alwaysDisplayInConsole: true
+    serviceAccountsEnabled: false
+    #    attributes: { }
+    fullScopeAllowed: true
+    rootUrl: "http://apps.localhost/apps/minispa"
+    baseUrl: "/?realm=acme&client_id=acme-minispa"
+    adminUrl: ""
+    redirectUris:
+      - "/*"
+    webOrigins:
+      - "+"
+    defaultClientScopes:
+      - "email"
+      - "roles"
+      - "profile"
+    optionalClientScopes:
+      - "phone"
+    attributes:
+      "pkce.code.challenge.method": "S256"
+      "post.logout.redirect.uris": "+"
+      # Enable light-weight access token
+      "client.use.lightweight.access.token.enabled": "true"
+
+  - clientId: acme-testapp
+    protocol: openid-connect
+    name: Test App
+    description: "Test App Description"
+    enabled: true
+    publicClient: true
+    standardFlowEnabled: false
+    directAccessGrantsEnabled: true
+    serviceAccountsEnabled: false
+    fullScopeAllowed: false
+    attributes:
+      "client.use.lightweight.access.token.enabled": "true"
+
+users:
+  - username: tester
+    email: tester@local
+    firstName: Theo
+    lastName: Tester
+    enabled: true
+    emailVerified: true
+    attributes:
+      locale: [ "en" ]
+    credentials:
+      - type: password
+        userLabel: initial
+        value: test
+        temporary: false

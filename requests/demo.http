@@ -1,0 +1,43 @@
+### Obtain light-weight Access Token via test app
+POST {{ISSUER}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+Accept: application/jwt
+
+grant_type = password &
+client_id = {{TEST_APP_CLIENT_ID}} &
+username = {{TEST_USERNAME}} &
+password= {{TEST_PASSWORD}} &
+scope = openid profile
+
+> {%
+    client.global.set("KC_ACCESS_TOKEN_LIGHT", response.body.access_token);
+%}
+
+### Obtain User info from User-Info Endpoint
+GET {{ISSUER}}/protocol/openid-connect/userinfo
+Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
+
+### Call API directly via light-weight Access Token
+GET {{RAW_API_BASE_URL}}/api/echo
+Accept: application/json
+Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
+
+### Obtain expanded Token from Token Introspection Endpoint
+POST {{ISSUER}}/protocol/openid-connect/token/introspect
+Content-Type: application/x-www-form-urlencoded
+Accept: application/jwt
+
+client_id = {{API_GATEWAY_CLIENT_ID}} &
+client_secret = {{API_GATEWAY_CLIENT_SECRET}} &
+token = {{KC_ACCESS_TOKEN_LIGHT}} &
+token_type_hint = access_token
+
+> {%
+    client.global.set("KC_ACCESS_TOKEN_FULL", response.body);
+%}
+
+
+### Call API with light-weight Access Token via proxy
+GET {{API_BASE_URL}}/api/echo
+Accept: application/json
+Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
