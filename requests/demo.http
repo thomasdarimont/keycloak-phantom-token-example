@@ -32,10 +32,6 @@ client_secret = {{API_GATEWAY_CLIENT_SECRET}} &
 token = {{KC_ACCESS_TOKEN_LIGHT}} &
 token_type_hint = access_token
 
-> {%
-    client.global.set("KC_ACCESS_TOKEN_FULL", response.body);
-%}
-
 
 ### Obtain expanded Token from Token Introspection Endpoint as JWT
 POST {{ISSUER}}/protocol/openid-connect/token/introspect
@@ -49,15 +45,15 @@ token_type_hint = access_token
 
 > {%
     client.global.set("KC_ACCESS_TOKEN_FULL", response.body);
+    console.log("https://jwt.io#token=" + response.body);
 %}
 
-
-### Call API-1 with light-weight Access Token via proxy
+### Call API-1 with light-weight Access Token via Proxy
 GET {{API_BASE_URL}}/api/1/echo
 Accept: application/json
 Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
 
-### Call API-2 with light-weight Access Token via proxy
+### Call API-2 with light-weight Access Token via Proxy
 GET {{API_BASE_URL}}/api/2/echo
 Accept: application/json
 Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
