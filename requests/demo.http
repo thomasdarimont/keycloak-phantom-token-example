@@ -11,6 +11,7 @@ scope = openid profile acme.api.1
 
 > {%
     client.global.set("KC_ACCESS_TOKEN_LIGHT", response.body.access_token);
+    console.log("https://jwt.io#token=" + response.body.access_token);
 %}
 
 ### Obtain User info from User-Info Endpoint
