@@ -89,6 +89,14 @@ clients:
       - "acme.api.1"
       - "acme.api.2"
 
+scopeMappings:
+  - client: acme-testapp
+    roles:
+      - acme-api-user
+  - clientScope: offline_access
+    roles:
+      - offline_access
+
 clientScopes:
   - name: acme.api.1
     description: 'Acme: API 1'
@@ -103,6 +111,11 @@ clientScopes:
     attributes:
       include.in.token.scope: 'true'
       display.on.consent.screen: 'false'
+roles:
+  # Realm specific roles
+  realm:
+    - name: "acme-api-user"
+      description: "Acme API User"
 
 users:
   - username: tester
@@ -118,3 +131,5 @@ users:
         userLabel: initial
         value: test
         temporary: false
+    realmRoles:
+      - acme-api-user
