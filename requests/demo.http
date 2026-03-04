@@ -14,14 +14,17 @@ scope = openid profile acme.api.1
     console.log("https://jwt.io#token=" + response.body.access_token);
 %}
 
+
 ### Obtain User info from User-Info Endpoint
 GET {{ISSUER}}/protocol/openid-connect/userinfo
 Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
+
 
 ### Call API 1 directly via lightweight Access Token for API 1
 GET {{RAW_API_BASE_URL}}/api/1/echo
 Accept: application/json
 Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
+
 
 ### Obtain expanded Token from Token Introspection Endpoint
 POST {{ISSUER}}/protocol/openid-connect/token/introspect
@@ -48,10 +51,12 @@ token_type_hint = access_token
     console.log("https://jwt.io#token=" + response.body);
 %}
 
+
 ### Call API-1 with light-weight Access Token via Proxy
 GET {{API_BASE_URL}}/api/1/echo
 Accept: application/json
 Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
+
 
 ### Call API-2 with light-weight Access Token via Proxy
 GET {{API_BASE_URL}}/api/2/echo
@@ -63,6 +68,7 @@ Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
 GET {{RAW_API_BASE_URL}}/api/2/echo
 Accept: application/json
 Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
+
 
 ### Obtain lightweight Access Token via test app for API 1+2
 POST {{ISSUER}}/protocol/openid-connect/token
@@ -79,15 +85,18 @@ scope = openid profile acme.api.1 acme.api.2
     client.global.set("KC_ACCESS_TOKEN_LIGHT", response.body.access_token);
 %}
 
+
 ### Try to call API 2 directly via lightweight Access Token for API 1+2
 GET {{RAW_API_BASE_URL}}/api/2/echo
 Accept: application/json
 Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
 
+
 ### Call API-1 with light-weight Access Token via proxy
 GET {{API_BASE_URL}}/api/1/echo
 Accept: application/json
 Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
+
 
 ### Call API-2 with light-weight Access Token via proxy
 GET {{API_BASE_URL}}/api/2/echo
