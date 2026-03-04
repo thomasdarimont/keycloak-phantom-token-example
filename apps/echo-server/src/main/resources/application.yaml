@@ -12,6 +12,7 @@ spring:
           jwk-set-uri: "${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs"
           principal-claim-name: preferred_username
           jws-algorithms: RS256,ES256
-#          authorities-claim-path: "#{realm_access.roles}"
+          # see: https://github.com/spring-projects/spring-boot/issues/48490
+          # authorities-claim-path: "#{realm_access.roles}"
 server:
   port: 9080
