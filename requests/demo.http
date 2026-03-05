@@ -1,7 +1,6 @@
 ### Obtain lightweight Access Token via test app for API 1
 POST {{ISSUER}}/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
-Accept: application/jwt
 
 grant_type = password &
 client_id = {{TEST_APP_CLIENT_ID}} &
@@ -11,7 +10,7 @@ scope = openid profile acme.api.1
 
 > {%
     client.global.set("KC_ACCESS_TOKEN_LIGHT", response.body.access_token);
-    console.log("https://jwt.io#token=" + response.body.access_token);
+    console.log("KC_ACCESS_TOKEN_LIGHT https://jwt.io#token=" + response.body.access_token);
 %}
 
 
@@ -20,7 +19,7 @@ GET {{ISSUER}}/protocol/openid-connect/userinfo
 Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
 
 
-### Call API 1 directly via lightweight Access Token for API 1
+### Call API 1 directly via lightweight Access Token for API 1 (without and with LW-AT)
 GET {{RAW_API_BASE_URL}}/api/1/echo
 Accept: application/json
 Authorization: Bearer {{KC_ACCESS_TOKEN_LIGHT}}
@@ -48,7 +47,6 @@ token_type_hint = access_token
 
 > {%
     client.global.set("KC_ACCESS_TOKEN_FULL", response.body);
-    console.log("https://jwt.io#token=" + response.body);
 %}
 
 
