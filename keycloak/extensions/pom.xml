@@ -10,7 +10,7 @@
 
 
     <properties>
-        <keycloak.version>26.5.4</keycloak.version>
+        <keycloak.version>26.5.5</keycloak.version>
 
         <!-- Testing -->
         <junit-jupiter.version>5.11.4</junit-jupiter.version>
